@@ -57,17 +57,15 @@ public class InformationSyncServiceImpl implements InformationSyncService {
         List<YonyouPersonImport> yonyouPersonImportList = yonyouPersonImportService.findAll();//考勤系统人事数据
         compareUpdate(yonyouPersonImportSecList, yonyouPersonImportList);
 //        2:检查每个字段，看是否有更新
-        boolean flag = checkPersonInfo(yonyouPersonImportSecList, yonyouPersonImportList);
 //        3:把有离职后复职的人员信息同步,并把状态切换时间跟新为离职日期后一天
         boolean flag1 = restoration(yonyouPersonImportSecList, yonyouPersonImportList);
 //        4:把离职人员的状态更新为离职
         boolean flag2 = quitUpdate(yonyouPersonImportSecList, yonyouPersonImportList);
 //        5:把新入职的人员信息插入到表中
         boolean flag3 = insertNewPerson(yonyouPersonImportSecList, yonyouPersonImportList);
-        if (flag && flag1 && flag2 && flag3) {
+        if (flag1 && flag2 && flag3) {
             return true;
         }
-        logger.error("同步人员信息错误" + flag);
         logger.error("同步人员信息错误" + flag1);
         logger.error("同步人员信息错误" + flag2);
         logger.error("同步人员信息错误" + flag3);
@@ -99,12 +97,11 @@ public class InformationSyncServiceImpl implements InformationSyncService {
                     personImportSec.setHomelaborlevelnm3(persontype.getSyscodeOld());
                 }
             }
-//            for (Department department: departments) {
-//                if(department.getDeptName().equals(personImportSec.)){
-//
-//                }
-//            }
-
+            for (Department department: departments) {
+                if(department.getDeptName().equals(personImportSec.getHomelaborleveldsc2())&&department.getSyscodeOld().startsWith(personImportSec.getHomelaborlevelnm1())){
+                    personImportSec.setHomelaborlevelnm2(department.getSyscodeOld().split("_")[1]);
+                }
+            }
         }
 
     }
@@ -172,34 +169,28 @@ public class InformationSyncServiceImpl implements InformationSyncService {
     }
 
     private boolean restoration(List<YonyouPersonImportSec> yonyouPersonImportSecList, List<YonyouPersonImport> yonyouPersonImportList) {
-
-        for (YonyouPersonImportSec yonyouPersonImportSec : yonyouPersonImportSecList) {
-            StringToDate(yonyouPersonImportSec);
-            if ("Active".equals(yonyouPersonImportSec.getEmploymentstatus())) {
-                for (YonyouPersonImport yonyouPersonImport : yonyouPersonImportList) {
-                    if (yonyouPersonImportSec.getPersonnum().equals(yonyouPersonImport.getPersonnum()) && "Terminated".equals(yonyouPersonImport.getEmploymentstatus())) {
-                        BeanUtils.copyProperties(yonyouPersonImportSec, yonyouPersonImport);
-                        yonyouPersonImport.setProcessFlag("0");
-                        yonyouPersonImport.setLastUpdateDate(new Date());
-                        yonyouPersonImportService.update(yonyouPersonImport);
+        boolean flag = true;
+        try {
+            for (YonyouPersonImportSec yonyouPersonImportSec : yonyouPersonImportSecList) {
+                StringToDate(yonyouPersonImportSec);
+                if ("Active".equals(yonyouPersonImportSec.getEmploymentstatus())) {
+                    for (YonyouPersonImport yonyouPersonImport : yonyouPersonImportList) {
+                        if (yonyouPersonImportSec.getPersonnum().equals(yonyouPersonImport.getPersonnum()) && "Terminated".equals(yonyouPersonImport.getEmploymentstatus())) {
+                            BeanUtils.copyProperties(yonyouPersonImportSec, yonyouPersonImport);
+                            yonyouPersonImport.setProcessFlag("0");
+                            yonyouPersonImport.setLastUpdateDate(new Date());
+                            yonyouPersonImportService.update(yonyouPersonImport);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            logger.error("===========restoration===========error==");
+            return false;
         }
-        boolean flag = true;
-
-
         return flag;
     }
 
-    private boolean checkPersonInfo(List<YonyouPersonImportSec> yonyouPersonImportSecList, List<YonyouPersonImport> yonyouPersonImportList) {
-        boolean flag = false;
-//          把有修改的数据行更新为修改后的值，并把标志位置为未读(在职人员)l_HOMELABORLEVELDSC3 in('员工', '职员', '其他人员')
-//          把有修改的数据行更新为修改后的值，并把标志位置为未读(非在职及其他人员不更新人员类别)
-
-
-        return flag;
-    }
 
     /**
      * @return 部门信息是否同步成功
