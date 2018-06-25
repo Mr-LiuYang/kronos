@@ -24,8 +24,9 @@ public class YonyouPersonImportSec implements Serializable {
     private String homelaborlevelnm2;
     @Column
     private String homelaborleveldsc2;
-    @Column
-    private String hiredate;
+    @Column(name = "hiredate")
+    private String hiredate1;
+    private Date hiredate;
     @Column
     private String workprocedd;
     @Column
@@ -42,8 +43,9 @@ public class YonyouPersonImportSec implements Serializable {
     private String position;
     @Column
     private String ranks;
-    @Column
-    private String birthday;
+    @Column(name = "birthday")
+    private String birthday1;
+    private Date birthday;
     @Column
     private String sex;
     @Column
@@ -58,10 +60,12 @@ public class YonyouPersonImportSec implements Serializable {
     private String employmentstatus;
     @Column
     private String quittype;
-    @Column
-    private String employmentstatusdt;
-    @Column
-    private String startworkdate;
+    @Column(name = "employmentstatusdt")
+    private String employmentstatusdt1;
+    private Date employmentstatusdt;
+    @Column(name = "startworkdate")
+    private String startworkdate1;
+    private Date startworkdate;
     @Column
     private String homecountry;
     @Column
@@ -94,7 +98,8 @@ public class YonyouPersonImportSec implements Serializable {
                 ", personfullname='" + personfullname + '\'' +
                 ", homelaborlevelnm2='" + homelaborlevelnm2 + '\'' +
                 ", homelaborleveldsc2='" + homelaborleveldsc2 + '\'' +
-                ", hiredate='" + hiredate + '\'' +
+                ", hiredate1='" + hiredate1 + '\'' +
+                ", hiredate=" + hiredate +
                 ", workprocedd='" + workprocedd + '\'' +
                 ", workstation='" + workstation + '\'' +
                 ", homelaborleveldsc3='" + homelaborleveldsc3 + '\'' +
@@ -103,7 +108,8 @@ public class YonyouPersonImportSec implements Serializable {
                 ", homelaborleveldsc5='" + homelaborleveldsc5 + '\'' +
                 ", position='" + position + '\'' +
                 ", ranks='" + ranks + '\'' +
-                ", birthday='" + birthday + '\'' +
+                ", birthday1='" + birthday1 + '\'' +
+                ", birthday=" + birthday +
                 ", sex='" + sex + '\'' +
                 ", homelaborlevelnm1='" + homelaborlevelnm1 + '\'' +
                 ", homelaborleveldsc1='" + homelaborleveldsc1 + '\'' +
@@ -111,8 +117,10 @@ public class YonyouPersonImportSec implements Serializable {
                 ", personnelclassfication='" + personnelclassfication + '\'' +
                 ", employmentstatus='" + employmentstatus + '\'' +
                 ", quittype='" + quittype + '\'' +
-                ", employmentstatusdt='" + employmentstatusdt + '\'' +
-                ", startworkdate='" + startworkdate + '\'' +
+                ", employmentstatusdt1='" + employmentstatusdt1 + '\'' +
+                ", employmentstatusdt=" + employmentstatusdt +
+                ", startworkdate1='" + startworkdate1 + '\'' +
+                ", startworkdate=" + startworkdate +
                 ", homecountry='" + homecountry + '\'' +
                 ", email='" + email + '\'' +
                 ", homelaborlevelnm5='" + homelaborlevelnm5 + '\'' +
@@ -140,6 +148,7 @@ public class YonyouPersonImportSec implements Serializable {
             return false;
         if (homelaborleveldsc2 != null ? !homelaborleveldsc2.equals(that.homelaborleveldsc2) : that.homelaborleveldsc2 != null)
             return false;
+        if (hiredate1 != null ? !hiredate1.equals(that.hiredate1) : that.hiredate1 != null) return false;
         if (hiredate != null ? !hiredate.equals(that.hiredate) : that.hiredate != null) return false;
         if (workprocedd != null ? !workprocedd.equals(that.workprocedd) : that.workprocedd != null) return false;
         if (workstation != null ? !workstation.equals(that.workstation) : that.workstation != null) return false;
@@ -153,6 +162,7 @@ public class YonyouPersonImportSec implements Serializable {
             return false;
         if (position != null ? !position.equals(that.position) : that.position != null) return false;
         if (ranks != null ? !ranks.equals(that.ranks) : that.ranks != null) return false;
+        if (birthday1 != null ? !birthday1.equals(that.birthday1) : that.birthday1 != null) return false;
         if (birthday != null ? !birthday.equals(that.birthday) : that.birthday != null) return false;
         if (sex != null ? !sex.equals(that.sex) : that.sex != null) return false;
         if (homelaborlevelnm1 != null ? !homelaborlevelnm1.equals(that.homelaborlevelnm1) : that.homelaborlevelnm1 != null)
@@ -166,7 +176,11 @@ public class YonyouPersonImportSec implements Serializable {
         if (employmentstatus != null ? !employmentstatus.equals(that.employmentstatus) : that.employmentstatus != null)
             return false;
         if (quittype != null ? !quittype.equals(that.quittype) : that.quittype != null) return false;
+        if (employmentstatusdt1 != null ? !employmentstatusdt1.equals(that.employmentstatusdt1) : that.employmentstatusdt1 != null)
+            return false;
         if (employmentstatusdt != null ? !employmentstatusdt.equals(that.employmentstatusdt) : that.employmentstatusdt != null)
+            return false;
+        if (startworkdate1 != null ? !startworkdate1.equals(that.startworkdate1) : that.startworkdate1 != null)
             return false;
         if (startworkdate != null ? !startworkdate.equals(that.startworkdate) : that.startworkdate != null)
             return false;
@@ -190,6 +204,7 @@ public class YonyouPersonImportSec implements Serializable {
         result = 31 * result + (personfullname != null ? personfullname.hashCode() : 0);
         result = 31 * result + (homelaborlevelnm2 != null ? homelaborlevelnm2.hashCode() : 0);
         result = 31 * result + (homelaborleveldsc2 != null ? homelaborleveldsc2.hashCode() : 0);
+        result = 31 * result + (hiredate1 != null ? hiredate1.hashCode() : 0);
         result = 31 * result + (hiredate != null ? hiredate.hashCode() : 0);
         result = 31 * result + (workprocedd != null ? workprocedd.hashCode() : 0);
         result = 31 * result + (workstation != null ? workstation.hashCode() : 0);
@@ -199,6 +214,7 @@ public class YonyouPersonImportSec implements Serializable {
         result = 31 * result + (homelaborleveldsc5 != null ? homelaborleveldsc5.hashCode() : 0);
         result = 31 * result + (position != null ? position.hashCode() : 0);
         result = 31 * result + (ranks != null ? ranks.hashCode() : 0);
+        result = 31 * result + (birthday1 != null ? birthday1.hashCode() : 0);
         result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
         result = 31 * result + (sex != null ? sex.hashCode() : 0);
         result = 31 * result + (homelaborlevelnm1 != null ? homelaborlevelnm1.hashCode() : 0);
@@ -207,7 +223,9 @@ public class YonyouPersonImportSec implements Serializable {
         result = 31 * result + (personnelclassfication != null ? personnelclassfication.hashCode() : 0);
         result = 31 * result + (employmentstatus != null ? employmentstatus.hashCode() : 0);
         result = 31 * result + (quittype != null ? quittype.hashCode() : 0);
+        result = 31 * result + (employmentstatusdt1 != null ? employmentstatusdt1.hashCode() : 0);
         result = 31 * result + (employmentstatusdt != null ? employmentstatusdt.hashCode() : 0);
+        result = 31 * result + (startworkdate1 != null ? startworkdate1.hashCode() : 0);
         result = 31 * result + (startworkdate != null ? startworkdate.hashCode() : 0);
         result = 31 * result + (homecountry != null ? homecountry.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
@@ -254,11 +272,19 @@ public class YonyouPersonImportSec implements Serializable {
         this.homelaborleveldsc2 = homelaborleveldsc2;
     }
 
-    public String getHiredate() {
+    public String getHiredate1() {
+        return hiredate1;
+    }
+
+    public void setHiredate1(String hiredate1) {
+        this.hiredate1 = hiredate1;
+    }
+
+    public Date getHiredate() {
         return hiredate;
     }
 
-    public void setHiredate(String hiredate) {
+    public void setHiredate(Date hiredate) {
         this.hiredate = hiredate;
     }
 
@@ -326,11 +352,19 @@ public class YonyouPersonImportSec implements Serializable {
         this.ranks = ranks;
     }
 
-    public String getBirthday() {
+    public String getBirthday1() {
+        return birthday1;
+    }
+
+    public void setBirthday1(String birthday1) {
+        this.birthday1 = birthday1;
+    }
+
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
@@ -390,19 +424,35 @@ public class YonyouPersonImportSec implements Serializable {
         this.quittype = quittype;
     }
 
-    public String getEmploymentstatusdt() {
+    public String getEmploymentstatusdt1() {
+        return employmentstatusdt1;
+    }
+
+    public void setEmploymentstatusdt1(String employmentstatusdt1) {
+        this.employmentstatusdt1 = employmentstatusdt1;
+    }
+
+    public Date getEmploymentstatusdt() {
         return employmentstatusdt;
     }
 
-    public void setEmploymentstatusdt(String employmentstatusdt) {
+    public void setEmploymentstatusdt(Date employmentstatusdt) {
         this.employmentstatusdt = employmentstatusdt;
     }
 
-    public String getStartworkdate() {
+    public String getStartworkdate1() {
+        return startworkdate1;
+    }
+
+    public void setStartworkdate1(String startworkdate1) {
+        this.startworkdate1 = startworkdate1;
+    }
+
+    public Date getStartworkdate() {
         return startworkdate;
     }
 
-    public void setStartworkdate(String startworkdate) {
+    public void setStartworkdate(Date startworkdate) {
         this.startworkdate = startworkdate;
     }
 

@@ -11,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -55,8 +54,8 @@ public class InformationSyncServiceImpl implements InformationSyncService {
 //        1:从NC数据库获取人员信息
         List<YonyouPersonImportSec> yonyouPersonImportSecList = yonyouPersonImportServiceSec.getListByNC();//人事系统人事数据源头
 //        1.1 根据对照表修改数据源
-        compareUpdate(yonyouPersonImportSecList);
         List<YonyouPersonImport> yonyouPersonImportList = yonyouPersonImportService.findAll();//考勤系统人事数据
+        compareUpdate(yonyouPersonImportSecList, yonyouPersonImportList);
 //        2:检查每个字段，看是否有更新
         boolean flag = checkPersonInfo(yonyouPersonImportSecList, yonyouPersonImportList);
 //        3:把有离职后复职的人员信息同步,并把状态切换时间跟新为离职日期后一天
@@ -75,14 +74,36 @@ public class InformationSyncServiceImpl implements InformationSyncService {
         return false;
     }
 
-    private void compareUpdate(List<YonyouPersonImportSec> yonyouPersonImportSecList) {
+    private void compareUpdate(List<YonyouPersonImportSec> yonyouPersonImportSecList, List<YonyouPersonImport> yonyouPersonImportList) {
         List<Company> companies = companyService.findAll();
         List<Job> jobs = jobService.findAll();
         List<Persontype> persontypes = persontypeService.findAll();
         List<Department> departments = departmentService.findAll();
 
-        for (YonyouPersonImportSec personImportSec: yonyouPersonImportSecList) {
-            personImportSec.getHomelaborleveldsc1();
+        for (YonyouPersonImportSec personImportSec : yonyouPersonImportSecList) {
+            StringToDate(personImportSec);
+            for (YonyouPersonImport yonyouPersonImport : yonyouPersonImportList) {
+                if (personImportSec.getPersonnum().equals(yonyouPersonImport.getPersonnum())) {
+                    yonyouPersonImport.setAttribute1(personImportSec.getBuName());
+                    yonyouPersonImport.setAttribute3(personImportSec.getOutright());
+                    yonyouPersonImport.setAttribute4(personImportSec.getCardfFlag());
+                }
+            }
+            for (Company company : companies) {
+                if (company.getCompanyName().equals(personImportSec.getHomelaborleveldsc1())) {   //根据公司中文名，将新系统编码转为老系统编码
+                    personImportSec.setHomelaborlevelnm1(company.getSyskeyOld());
+                }
+            }
+            for (Persontype persontype : persontypes) {
+                if (persontype.getPersontypeName().equals(personImportSec.getHomelaborleveldsc3())) {  //根据人员类别，将新系统编码转为老系统编码
+                    personImportSec.setHomelaborlevelnm3(persontype.getSyscodeOld());
+                }
+            }
+//            for (Department department: departments) {
+//                if(department.getDeptName().equals(personImportSec.)){
+//
+//                }
+//            }
 
         }
 
@@ -99,8 +120,11 @@ public class InformationSyncServiceImpl implements InformationSyncService {
 
             for (YonyouPersonImportSec importSec : yonyouPersonImportSecList) {
                 if (!personNums.contains(importSec.getPersonnum())) {  //不包含
-                    YonyouPersonImport yonyouPersonImport = new YonyouPersonImport();//日期属性修改
+                    YonyouPersonImport yonyouPersonImport = new YonyouPersonImport();
                     BeanUtils.copyProperties(importSec, yonyouPersonImport);
+                    yonyouPersonImport.setCreationDate(new Date());
+                    yonyouPersonImport.setLastUpdateDate(new Date());
+                    yonyouPersonImport.setProcessFlag("0");
                     yonyouPersonImportService.insert(yonyouPersonImport);
                 }
             }
@@ -111,15 +135,58 @@ public class InformationSyncServiceImpl implements InformationSyncService {
         return flag;
     }
 
+    private void StringToDate(YonyouPersonImportSec importSec) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            importSec.setBirthday(sdf.parse(importSec.getBirthday1()));
+            importSec.setEmploymentstatusdt(sdf.parse(importSec.getEmploymentstatusdt1()));
+            importSec.setStartworkdate(sdf.parse(importSec.getStartworkdate1()));
+            importSec.setHiredate(sdf.parse(importSec.getHiredate1()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean quitUpdate(List<YonyouPersonImportSec> yonyouPersonImportSecList, List<YonyouPersonImport> yonyouPersonImportList) {
-        boolean flag = false;
-
-
+        boolean flag = true;
+        try {
+            Set<String> personNums = new HashSet<>(yonyouPersonImportSecList.size());
+            for (YonyouPersonImportSec personImport : yonyouPersonImportSecList) {
+                personNums.add(personImport.getPersonnum());
+            }
+            for (YonyouPersonImport yonyouPersonImport : yonyouPersonImportList) {
+                if (!personNums.contains(yonyouPersonImport.getPersonnum())) {
+                    yonyouPersonImport.setLastUpdateDate(new Date());
+                    yonyouPersonImport.setQuittype("自离");
+                    yonyouPersonImport.setEmploymentstatus("Terminated");
+                    yonyouPersonImport.setProcessFlag("0");
+                    yonyouPersonImport.setEmploymentstatusdt(new Date());
+                    yonyouPersonImportService.update(yonyouPersonImport);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("离职人员更新出错");
+            return false;
+        }
         return flag;
     }
 
     private boolean restoration(List<YonyouPersonImportSec> yonyouPersonImportSecList, List<YonyouPersonImport> yonyouPersonImportList) {
-        boolean flag = false;
+
+        for (YonyouPersonImportSec yonyouPersonImportSec : yonyouPersonImportSecList) {
+            StringToDate(yonyouPersonImportSec);
+            if ("Active".equals(yonyouPersonImportSec.getEmploymentstatus())) {
+                for (YonyouPersonImport yonyouPersonImport : yonyouPersonImportList) {
+                    if (yonyouPersonImportSec.getPersonnum().equals(yonyouPersonImport.getPersonnum()) && "Terminated".equals(yonyouPersonImport.getEmploymentstatus())) {
+                        BeanUtils.copyProperties(yonyouPersonImportSec, yonyouPersonImport);
+                        yonyouPersonImport.setProcessFlag("0");
+                        yonyouPersonImport.setLastUpdateDate(new Date());
+                        yonyouPersonImportService.update(yonyouPersonImport);
+                    }
+                }
+            }
+        }
+        boolean flag = true;
 
 
         return flag;
@@ -129,9 +196,6 @@ public class InformationSyncServiceImpl implements InformationSyncService {
         boolean flag = false;
 //          把有修改的数据行更新为修改后的值，并把标志位置为未读(在职人员)l_HOMELABORLEVELDSC3 in('员工', '职员', '其他人员')
 //          把有修改的数据行更新为修改后的值，并把标志位置为未读(非在职及其他人员不更新人员类别)
-        for (YonyouPersonImportSec personSec : yonyouPersonImportSecList) {
-
-        }
 
 
         return flag;
