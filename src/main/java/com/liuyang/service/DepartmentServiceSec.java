@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface DepartmentServiceSec {
     /**
-     * 人事系统获取 YonyouPersonImport
+     * 人事系统获取 部门信息
      */
     List<DepartmentSec> getDepartmentSecListByNC();
 }
