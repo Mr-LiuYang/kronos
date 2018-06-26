@@ -38,5 +38,10 @@ public class YonyouPersonImportServiceImpl implements YonyouPersonImportService 
         return personImportRepository.getYonyouPersonImportByPersonnum(id);
     }
 
+    @Override
+    public YonyouPersonImport getYonyouPersonImportByPersonnumAndAndEmploymentstatus(String personnum, String terminated) {
+        return personImportRepository.getYonyouPersonImportByPersonnumAndAndEmploymentstatus(personnum,terminated);
+    }
+
 
 }

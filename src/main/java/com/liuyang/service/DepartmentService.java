@@ -35,4 +35,6 @@ public interface DepartmentService {
      * @param id 编号
      */
     Department findBySyskey_old(String syskey_old);
+
+    Department findBySyskey_New(String Syskey_New);
 }

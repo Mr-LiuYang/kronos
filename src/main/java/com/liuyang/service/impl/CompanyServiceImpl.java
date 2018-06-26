@@ -34,8 +34,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Company findBySyskey_old(String Syskey_old) {
-        return companyRepository.getCompanyBySyskeyOld(Syskey_old);
+    public Company findBySyskey_New(String id) {
+        return companyRepository.getCompanyBySyscodeNew(id);
     }
 
 }

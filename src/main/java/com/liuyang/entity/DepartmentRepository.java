@@ -12,4 +12,6 @@ public interface DepartmentRepository extends JpaRepository<Department,String> {
 
     Department getDepartmentBySyscodeOld(String Syscode_old);
 
+    Department getDepartmentBySyskeyNew(String SyskeyNew);
+
 }

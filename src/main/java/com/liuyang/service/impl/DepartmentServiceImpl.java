@@ -38,5 +38,10 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentRepository.getDepartmentBySyscodeOld(syskey_old);
     }
 
+    @Override
+    public Department findBySyskey_New(String Syskey_New) {
+        return departmentRepository.getDepartmentBySyskeyNew(Syskey_New);
+    }
+
 
 }

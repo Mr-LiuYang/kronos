@@ -34,5 +34,5 @@ public interface CompanyService {
      *
      * @param id 编号
      */
-    Company findBySyskey_old(String id);
+    Company findBySyskey_New(String id);
 }

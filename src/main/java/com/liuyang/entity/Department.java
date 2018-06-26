@@ -16,9 +16,9 @@ public class Department implements Serializable {
     private String deptName;
     @Column(name = "syscode_old")
     private String syscodeOld;
-    @Id
     @Column(name = "syskey_old")
     private String syskeyOld;
+    @Id
     @Column(name = "syscode_new")
     private String syscodeNew;
     @Column(name = "syskey_new")

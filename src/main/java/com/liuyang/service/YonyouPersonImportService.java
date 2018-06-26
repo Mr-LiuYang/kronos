@@ -37,4 +37,6 @@ public interface YonyouPersonImportService {
      */
     YonyouPersonImport findByPersonnum(String id);
 
+
+    YonyouPersonImport getYonyouPersonImportByPersonnumAndAndEmploymentstatus(String personnum, String terminated);
 }
